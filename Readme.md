@@ -4,5 +4,7 @@ However, even though it is not that much important detail, I have mixed some con
 
 In addition to the example in the video, I have used two another example from my course notes. They are as follows.
 
-1. ![Example1](/DijkstraAlgorithm/etc/Images/Example1.png)
-2. ![Example2](/DijkstraAlgorithm/etc/Images/Example2.png)
+### 1. Example 1 
+![Example1](/DijkstraAlgorithm/etc/Images/Example1.png)
+### 2. Example 2
+![Example2](/DijkstraAlgorithm/etc/Images/Example2.png)
