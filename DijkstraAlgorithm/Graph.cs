@@ -122,7 +122,9 @@ namespace DijkstraAlgorithm
                 GraphNode graphNode = graphNodes[i];
 
                 GraphEdge edge = (GraphEdge)m_edgesHashtable[GetHashcodeForConnection(from, graphNode)];    
-                if(edge != null)
+                if(edge != null && 
+                    (!edge.IsDirected && (edge.StartNode == from || edge.EndNode == from) ||
+                    (edge.IsDirected && edge.StartNode == from)))
                     edges.Add(edge);
             }
             return edges;
