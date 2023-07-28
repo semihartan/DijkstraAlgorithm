@@ -2,7 +2,7 @@
 {
     internal class Program
     {
-        static void Main(string[] args)
+        private static GraphPath Example1()
         {
             Graph graph = new Graph();
             GraphNode nodeA = new GraphNode("A");
@@ -23,13 +23,46 @@
             graph.AddEdge(new GraphEdge(nodeB, nodeD, 5));
             graph.AddEdge(new GraphEdge(nodeD, nodeE, 3));
             graph.AddEdge(new GraphEdge(nodeD, nodeF, 2));
-            graph.AddEdge(new GraphEdge(nodeE, nodeF, 1)); 
-            graph.AddEdge(new GraphEdge(nodeE, nodeC, 9)); 
+            graph.AddEdge(new GraphEdge(nodeE, nodeF, 1));
+            graph.AddEdge(new GraphEdge(nodeE, nodeC, 9));
             graph.AddEdge(new GraphEdge(nodeF, nodeC, 3));
-
-            GraphPath shortestPathFromA2C = graph.FindShortestPathFromTo(nodeA, nodeC);
-
-            Console.WriteLine($"Shortest Path From A to C is {shortestPathFromA2C}");
+             
+            return graph.FindShortestPathFromTo(nodeA, nodeC);
+        }
+        private static GraphPath Example2()
+        {
+            Graph graph = new Graph();
+            GraphNode node1 = new GraphNode("1");
+            GraphNode node2 = new GraphNode("2");
+            GraphNode node3 = new GraphNode("3");
+            GraphNode node4 = new GraphNode("4");
+            GraphNode node5 = new GraphNode("5"); 
+            graph.AddNode(node1);
+            graph.AddNode(node2);
+            graph.AddNode(node3);
+            graph.AddNode(node4);
+            graph.AddNode(node5);
+            graph.AddEdge(new GraphEdge(node1, node2, 100, true));
+            graph.AddEdge(new GraphEdge(node1, node3, 30, true));
+            graph.AddEdge(new GraphEdge(node2, node3, 20, true));
+            graph.AddEdge(new GraphEdge(node3, node4, 10, true));
+            graph.AddEdge(new GraphEdge(node3, node5, 60, true));
+            graph.AddEdge(new GraphEdge(node4, node2, 15, true));
+            graph.AddEdge(new GraphEdge(node4, node5, 50, true));
+            
+            return graph.FindShortestPathFromTo(node1, node2);
+        }
+        static void Main(string[] args)
+        {
+            List<GraphPath> shortestPathsFromExamples = new List<GraphPath>
+            {
+                Example1(),
+                Example2()
+            };
+            foreach (var shortestPath in shortestPathsFromExamples)
+            {
+                Console.WriteLine($"Shortest Path: {shortestPath}");    
+            } 
         }
     }
 }
