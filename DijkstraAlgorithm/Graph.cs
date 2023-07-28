@@ -22,11 +22,13 @@ namespace DijkstraAlgorithm
         private List<GraphNode> m_nodes;
         private List<GraphEdge> m_edges;
         private Hashtable m_nodeTags;
+        private Hashtable m_edgesHashtable;
         public Graph()
         { 
             m_nodes = new List<GraphNode>();
             m_edges = new List<GraphEdge>();
-            m_nodeTags = new Hashtable(); 
+            m_nodeTags = new Hashtable();
+            m_edgesHashtable = new Hashtable();
         }
         public void AddNode(GraphNode node)
         {
@@ -36,6 +38,7 @@ namespace DijkstraAlgorithm
         public void AddEdge(GraphEdge edge)
         {
             m_edges.Add(edge);
+            m_edgesHashtable.Add(GetHashcodeForConnection(edge.StartNode, edge.EndNode), edge);
         }
         public void RemoveNode(GraphNode node)
         {
@@ -44,16 +47,32 @@ namespace DijkstraAlgorithm
         public void RemoveEdge(GraphEdge edge)
         {
             m_edges.Remove(edge);
+        } 
+        public GraphPath FindShortestPathFromTo(GraphNode from, GraphNode to)
+        {
+            GraphPath shortestPath = new GraphPath();
+            List<GraphNode> shortestPathNodes = new List<GraphNode>();
+            CalculateShortestPaths(from);
+            while (to != from)
+            {
+                NodeTag nodeTag = (NodeTag)m_nodeTags[to];
+                shortestPathNodes.Add(to);
+                to = nodeTag.PreviousNode;
+            }
+            shortestPathNodes.Add(from);
+            shortestPathNodes.Reverse();
+            shortestPath.AddNodes(shortestPathNodes);
+            return shortestPath;
         }
         private void CalculateShortestPaths(GraphNode start)
         {
-            m_nodeTags[start] = new NodeTag(0.0, null); 
+            m_nodeTags[start] = new NodeTag(0.0, null);
             List<GraphNode> undiscoveredNodes = new List<GraphNode>(m_nodes.ToArray());
-            
-            GraphNode lastDiscoveredNode = start; 
+
+            GraphNode lastDiscoveredNode = start;
             while (undiscoveredNodes.Count > 1)
             {
-                List<GraphEdge> edgesFrom = FindEdgesFrom(lastDiscoveredNode);
+                List<GraphEdge> edgesFrom = FindEdgesFrom(undiscoveredNodes, lastDiscoveredNode);
                 NodeTag lastNodeTag = (NodeTag)m_nodeTags[lastDiscoveredNode];
                 foreach (var edge in edgesFrom)
                 {
@@ -75,7 +94,7 @@ namespace DijkstraAlgorithm
             foreach (var node in undiscoveredNodes)
             {
                 NodeTag nodeTag = (NodeTag)m_nodeTags[node];
-                if(nodeTag.Length < min)
+                if (nodeTag.Length < min)
                 {
                     min = nodeTag.Length;
                     graphNode = node;
@@ -83,22 +102,6 @@ namespace DijkstraAlgorithm
             }
             return graphNode;
         }
-        public GraphPath FindShortestPathFromTo(GraphNode from, GraphNode to)
-        {
-            GraphPath shortestPath = new GraphPath();
-            List<GraphNode> shortestPathNodes = new List<GraphNode>();
-            CalculateShortestPaths(from);
-            while (to != from)
-            {
-                NodeTag nodeTag = (NodeTag)m_nodeTags[to];
-                shortestPathNodes.Add(to);
-                to = nodeTag.PreviousNode;
-            }
-            shortestPathNodes.Add(from);
-            shortestPathNodes.Reverse();
-            shortestPath.AddNodes(shortestPathNodes);
-            return shortestPath;
-        } 
         private List<GraphEdge> FindEdgesFrom(GraphNode from)
         {
             List<GraphEdge> edges = new List<GraphEdge>();
@@ -110,7 +113,20 @@ namespace DijkstraAlgorithm
                     edges.Add(edge); 
             }
             return edges;
-        } 
+        }
+        private List<GraphEdge> FindEdgesFrom(List<GraphNode> graphNodes, GraphNode from)
+        {
+            List<GraphEdge> edges = new List<GraphEdge>();
+            for (int i = 0; i < graphNodes.Count; i++)
+            {
+                GraphNode graphNode = graphNodes[i];
+
+                GraphEdge edge = (GraphEdge)m_edgesHashtable[GetHashcodeForConnection(from, graphNode)];    
+                if(edge != null)
+                    edges.Add(edge);
+            }
+            return edges;
+        }
         private int GetHashcodeForConnection(GraphNode start, GraphNode end)
         {
             int hashcode = 17;
